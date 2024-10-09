@@ -7,15 +7,24 @@ from operators import (StageToRedshiftOperator, LoadFactOperator,
                        LoadDimensionOperator, DataQualityOperator)
 from helpers import SqlQueries
 
+# Default arguments for the DAG
 default_args = {
-    'owner': 'udacity',
+    'owner': 'Nadia',
     'start_date': pendulum.now(),
+    'depends_on_past': False,
+    'retries': 3,
+    'retry_delay': timedelta(minutes=5),
+    'catchup': False,
+    'email_on_retry': False
 }
+
+# Define the DAG
+
 
 @dag(
     default_args=default_args,
     description='Load and transform data in Redshift with Airflow',
-    schedule_interval='0 * * * *'
+    schedule_interval='0 * * * *'  # Set schedule to run at the top of every hour
 )
 def final_project():
 
@@ -52,5 +61,6 @@ def final_project():
     run_quality_checks = DataQualityOperator(
         task_id='Run_data_quality_checks',
     )
+
 
 final_project_dag = final_project()
