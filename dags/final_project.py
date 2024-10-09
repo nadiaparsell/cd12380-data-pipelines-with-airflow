@@ -3,7 +3,7 @@ import pendulum
 import os
 from airflow.decorators import dag
 from airflow.operators.dummy import DummyOperator
-from operators import (StageToRedshiftOperator, LoadFactOperator,
+from operators import (RedshiftSQLOperator, StageToRedshiftOperator, LoadFactOperator,
                        LoadDimensionOperator, DataQualityOperator)
 from helpers import SqlQueries
 
@@ -97,8 +97,9 @@ def final_project():
 
     end_operator = DummyOperator(task_id='Stop_execution')
 
-    start_operator >> [stage_events_to_redshift,
-                       stage_songs_to_redshift] >> load_songplays_table >> end_operator
+    start_operator >> [stage_events_to_redshift, stage_songs_to_redshift] >> \
+        load_songplays_table >> [load_user_dimension_table, load_song_dimension_table, load_artist_dimension_table, load_time_dimension_table] >> \
+        run_quality_checks >> end_operator
 
 
 final_project_dag = final_project()
