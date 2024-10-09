@@ -9,8 +9,10 @@ Two datasets are used for this project:
 
 ## DAGs:
 
-- create_tables_dag.py: A DAG that creates the required tables in Redshift.
+- create_tables.py: A DAG that creates the required tables in Redshift.
+  ![Create Tables](images/create_tables.png)
 - final_project.py: The main ETL DAG that orchestrates the data pipeline.
+  ![Final Project](images/final_project.png)
 
 ## Operators:
 
