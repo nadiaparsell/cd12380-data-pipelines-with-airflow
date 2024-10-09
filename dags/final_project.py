@@ -91,6 +91,8 @@ def final_project():
 
     run_quality_checks = DataQualityOperator(
         task_id='Run_data_quality_checks',
+        redshift_conn_id='redshift',
+        tables=['dev.public.users', 'songplays', 'songs', 'artists', 'time']
     )
 
     end_operator = DummyOperator(task_id='Stop_execution')
