@@ -32,10 +32,21 @@ def final_project():
 
     stage_events_to_redshift = StageToRedshiftOperator(
         task_id='Stage_events',
+        redshift_conn_id='redshift',
+        aws_credentials_id='aws_credentials',
+        table='staging_events',
+        s3_bucket='nadia-parsell',
+        s3_key='log-data/2018/11/',
+        log_json_file='s3://nadia-parsell/config/log_json_path.json'
     )
 
     stage_songs_to_redshift = StageToRedshiftOperator(
         task_id='Stage_songs',
+        redshift_conn_id='redshift',
+        aws_credentials_id='aws_credentials',
+        table='staging_songs',
+        s3_bucket='nadia-parsell',
+        s3_key='song-data/A/A/'
     )
 
     load_songplays_table = LoadFactOperator(
@@ -61,6 +72,10 @@ def final_project():
     run_quality_checks = DataQualityOperator(
         task_id='Run_data_quality_checks',
     )
+
+    end_operator = DummyOperator(task_id='Stop_execution')
+    start_operator >> [stage_events_to_redshift,
+                       stage_songs_to_redshift] >> end_operator
 
 
 final_project_dag = final_project()
