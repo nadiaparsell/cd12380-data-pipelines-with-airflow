@@ -51,6 +51,10 @@ def final_project():
 
     load_songplays_table = LoadFactOperator(
         task_id='Load_songplays_fact_table',
+        redshift_conn_id='redshift',
+        table='songplays',
+        sql_query=SqlQueries.songplay_table_insert
+
     )
 
     load_user_dimension_table = LoadDimensionOperator(
@@ -74,8 +78,9 @@ def final_project():
     )
 
     end_operator = DummyOperator(task_id='Stop_execution')
+
     start_operator >> [stage_events_to_redshift,
-                       stage_songs_to_redshift] >> end_operator
+                       stage_songs_to_redshift] >> load_songplays_table >> end_operator
 
 
 final_project_dag = final_project()
